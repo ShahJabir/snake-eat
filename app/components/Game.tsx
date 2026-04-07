@@ -1,4 +1,4 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,6 +18,16 @@ export default function Game(): JSX.Element {
   const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isGameOver) {
+      const intervalId = setInterval(() => {
+        !isPaused && moveSnake();
+      }, MOVE_INTERVAL);
+      return () => clearInterval(intervalId);
+    }
+  }, [snake, isGameOver, isPaused]);
+
   const handleGesture = (event: GestureEventType) => {
     const { translationX, translationY } = event.nativeEvent;
     if (Math.abs(translationX) > Math.abs(translationY)) {
@@ -33,6 +43,29 @@ export default function Game(): JSX.Element {
         setDirection(Direction.Up);
       }
     }
+  };
+
+  const moveSnake = () => {
+    const snakeHead = snake[0];
+    const newHead = { ...snakeHead };
+    // game over
+    switch (direction) {
+      case Direction.Up:
+        newHead.y -= 1;
+        break;
+      case Direction.Down:
+        newHead.y += 1;
+        break;
+      case Direction.Left:
+        newHead.x -= 1;
+        break;
+      case Direction.Right:
+        newHead.x += 1;
+        break;
+      default:
+        break;
+    }
+    setSnake([newHead, ...snake.slice(0, -1)]);
   };
   return (
     <PanGestureHandler onGestureEvent={handleGesture}>
