@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { JSX, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
@@ -26,6 +27,7 @@ export default function Game(): JSX.Element {
       }, MOVE_INTERVAL);
       return () => clearInterval(intervalId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snake, isGameOver, isPaused]);
 
   const handleGesture = (event: GestureEventType) => {
